@@ -1,0 +1,37 @@
+﻿Welcome to Yale IMs!
+
+
+To build the website, we used the Model, View, Controller approach.
+The languages used in the project were PHP for the server-side validations and the main functionalities of the website, JavaScript for client-side validations, chart contained in the “colleges_view” page, SQL used through myPHPadmin to establish a database for the website and HTML and CSS to display the information to the user.
+To improve the looks of the front-end of the website, we used a software called Pingendo, that allowed us to make better use of the bootstrap library, making the website more modern and better looking.
+
+
+Model:
+The database to the project was created in the myPHPadmin and to retain all the information, we made use of 3 tables:
+        Users: a table that contains every user’s ID, their names, usernames, colleges, hashed passwords and whether they are master users or admin users
+        Matches: a table that contains information about every individual match giving even match a unique ID, the sport that was played, the date of the match and the amount of points scored by each college in that match.
+        Stats: a table with a fixed size of 12 colleges hard coded into the table that contains a unique ID for everyone of them, the short for the colleges’ names (Berkeley = BK, Branford = BR, etc.), the URL related to their shields, the amount of points the college has scored in each sport as well as the sum of these points in a field called total score.
+        
+Controller / View
+Here, we will explain briefly how each controller relates to its view and vice-versa.
+
+
+colleges.php: performs a query that selects all the information about a particular college, clicked by the user and, therefore, passed by GET to this page. It is prevented from not finding the college, creating a page that apologizes for not doing so and, if it succeeds, it renders the colleges_view page, naming it with the name of the college, and passing it information such as the college’s stats for each sport, the name of the college and the associative array that connects the short name for the college with its actual name (called "sport_map" ).
+The rendered page uses the information sent to define the picture that is going to be shown, the name of the college, the description, which data will be inserted into the table and which data will be inserted into the chart in the bottom of the page.
+        
+index.php: this is the homepage controller. It does a SELECT query into the stats table to get the total score for each college and sorts them in an array by their current total scores. At the end, it sends the sorted array as a parameter to the home.php (the view for the homepage).
+input_scores.php: the controller checks if it receives a GET or POST request. If it received a GET request, it will render the form to input_scores. If it receives a POST, it will check the values received and insert them into the database. For each college, it will update the stats table, updating the college's total score and the score for the sport of the match being inserted. After this, it will insert an entry into the matches table with the information of the match (sport, date and score for each college). 
+We developed the controller this way due to the nature of the tournament. There are many sports that have more than two teams competing, so this way the admin can input the score that each team should receive in the tournament for that match. The Yale IMs regulations define the number of points for each sport, so the admin user should follow those guidelines when inputting scores for a match.
+        login.php: the login.php controller is very similar to that of the CS50 FInance. When it receives a GET request, it renders a form so the user can input his login information. When it receives a POST request, it checks if all the necessary information was provided and does a query in the users table to check if the user exists and if the password matches. Using the query function in the CS50 library, we protect the website against SQL Injection attacks. After verifying the data, it sets some the values for "id" and "master" in the $_SESSION superglobal variable.
+        logout.php: it just calls the logout() function from the helper.php file to log out the current user.
+        media.php: this controller simply renders the media_view.php file, where we inserted a script from Twitter that searches for the most recent tweets containing the hashtags #yaleims and #yaleintramurals.
+        register.php: only master users have access to this controller (that'’ why we keep the "master" boolean value in the $_SESSION superglobal variable). Just like in CS50 finance, the master user can register new users (normal admin or other master). After registering the new admin, it redirects the current master user to the homepage, without logging him out.
+        remove_scores.php: it uses the same logic from remove_users.php. It does a query search for all matches into the matches table and displays the results in a table. To remove a match, the user should click a link that will send a GET request to remove_scores.php with the "match_id" as a query parameter. The controller searches for the match in the database, updates the stats table (by removing the points that each college received from that match) and deletes the match from the matches table.
+        remove_user.php: only master users can access this controller as well. The controllers check if the GET request made by the user had a "user_id" as a query. If it had not, it renders a view with all the users registered, if it has, it removes the user with that user_id from the database. The controller works this way because on the view (remove_user_view.php) we print the users in a table and to remove a user you click on his username. Each username is a link to remove_user.php with a user_id parameter in the GET request. This way, the controller knows which user it is supposed to remove.
+        schedule.php: simply renders the schedule_view page.
+        scripts.js: in this file we stored five scripts used in the website.
+                defineDays(): Define the number of options for days the should be displayed based on the month inputted by the user (e.g. february->28, december->31).
+                verifySubmit(): does client-side validation for the user inputs in the register_form.php (when registering a new user).
+                dataCheck(): does client-side validation for the user inputs in the input_scores_form.
+                userCheck(): does client-side validation when removing a user.
+                removeScoresCheck(): does client-side validation when removing the scores from a match.
