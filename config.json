@@ -1,8 +1,10 @@
-{
-    "database": {
-        "host": "localhost",
-        "name": "YaleIMs",
-        "username": "gg466",
-        "password": "XhzoK1l45sDy34tr"
-    }
-}
+// {
+//     "database": {
+//         "host": "localhost",
+//         "name": "YaleIMs",
+//         "username": "gg466",
+//         "password": "XhzoK1l45sDy34tr"
+//     }
+// }
+
+{}
